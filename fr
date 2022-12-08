@@ -1,0 +1,155 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <locale.h>
+#include <math.h>
+#define pi 3.141529
+#define e 2.71
+
+	double F1(double x)
+	{
+		double F1;
+		F1 = 2 * sin(pi * x) * sin(3 * pi * x) - 0.5;
+		return F1;
+	}
+	double F2(double x)
+	{
+		double F2;
+		if (x > 2)
+		{
+			F2 = pow(2, pow(e, x + 1 + sqrt(pow(x, 3))));
+		}
+		else if (x < -2)
+		{
+			F2 = 2 / 3. * sin(pow(x, 2)) + log(fabs(x));
+		}
+		else if (x >= -2 && x <= 2)
+		{
+			F2 = 1.5 * pow(x, 2) - tan(x);
+		}
+		return F2;
+	}
+	int main()
+	{
+		setlocale(LC_ALL, "RUS");
+
+		int i1, i2, i3;
+		double x = 1, xn, xk, h, res;
+		char s1, s2, tz;
+		puts("*********************************************************");
+		puts("*    Выберите функцию:                                  *");
+		puts("*1) F1(x)=2*sin(pi*x)*sin(3*pi*x)-0,5                   *");
+		puts("*2) F2(x)=1,5*x^2-tg(x), если -2 <=x<= 2                *");
+		puts("*   F2(x)=2^e^x+1+x^3/2, если x>2                       *");
+		puts("*   F2(x)=2/3*sin(x^2) + ln|x|, если x<-2               *");
+		puts("*********************************************************");
+		scanf_s("%d", &i1);
+		puts("*********************************************************");
+		puts("*      Что вы хотите сделать с выбранной функцией?      *");
+		puts("*1)Рассчитать значение функции при одном x              *");
+		puts("*2)Рассчитать множество значений функции на промежутке  *");
+		puts("*3)Построить график выбранной функции на промежутке     *");
+		puts("*                                                       *");
+		puts("*                                                       *");
+		puts("*********************************************************");
+		scanf_s("%d", &i2);
+
+		switch (i2)
+		{
+		case 1:
+		{
+			puts("*     Введите x для рассчета значения функции:          *");
+			scanf_s("%lf", &x);
+			if (i1 == 1)
+			{
+				res = F1(x);
+				printf("%.2lf\n", res);
+			}
+			else
+			{
+				res = F2(x);
+				printf("%.2lf\n", res);
+			}
+			break;
+		}
+
+		case 2:
+		{
+			puts("Введите промежуток и шаг для рассчета значений: (например, [1;6) 5)");
+			scanf_s("%c %lf %c %lf %c %lf", &s1, &xn, &tz, &xk, &s2, &h);
+			puts("*******************************************************");
+			puts("*         x              |             F(x)           *");
+			if (i1 == 1)
+			{
+				if (s1 == '(' && s2 == ')')
+				{
+					for (double i = xn + h;i < xk;i += h)
+					{
+						x = i;
+						printf("*  %.2lf  |  %.2lf \n*", i, F1(x));
+					}
+				}
+				if (s1 == '(' && s2 == ']')
+				{
+					for (double i = xn + h;i <= xk; i += h)
+					{
+						x = i;
+						printf("*  %.2lf  |  %.2lf *\n", i, F1(x));
+					}
+				}
+				if (s1 == '[' && s2 == ')')
+				{
+					for (double i = xn; i < xk; i += h)
+					{
+						x = i;
+						printf("*  %.2lf  |  %.2lf *\n", i, F1(x));
+					}
+				}
+				if (s1 == '[' && s2 == ']')
+				{
+					for (double i = xn; i <= xk; i += h)
+					{
+						x = i;
+						printf("*  %.2lf  |  %.2lf  *\n", i, F1(x));
+					}
+				}
+			}
+			if (i2 == 2)
+			{
+				if (s1 == '(' && s2 == ')')
+				{
+					for (double i = xn + h;i < xk;i += h)
+					{
+						x = i;
+						printf("*  %.2lf  |  %.2lf *\n", i, F2(x));
+					}
+				}
+				if (s1 == '(' && s2 == ']')
+				{
+					for (double i = xn + h;i <= xk; i += h)
+					{
+						x = i;
+						printf("*  %.2lf  |  %.2lf *\n", i, F2(x));
+					}
+				}
+				if (s1 == '[' && s2 == ')')
+				{
+					for (double i = xn; i < xk; i += h)
+					{
+						x = i;
+						printf("*  %.2lf  |  %.2lf *\n", i, F2(x));
+					}
+				}
+				if (s1 == '[' && s2 == ']')
+				{
+					for (double i = xn; i <= xk; i += h)
+					{
+						x = i;
+						printf("*  %.2lf  |  %.2lf  *\n", i, F2(x));
+					}
+				}
+			}
+			puts("*******************************************************");
+			break;
+		}
+		}
+	}
