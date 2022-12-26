@@ -1,0 +1,235 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <locale.h>
+#include <math.h>
+#define pi 3.1415
+#define SCREENW 60
+#define SCREENH 40
+
+typedef double (*fun) (double);
+double fun1(double);
+double fun2(double);
+void tab(char, float, float, char, float, fun);
+void plot(double, double, fun);
+
+
+void main(void) {
+	setlocale(LC_ALL, "RUS");
+	while (1)
+	{
+		puts("_______________________________________________________________________________________________________________________");
+		puts("*1. F1(x)=2*sin(pi*x)*sin(3*pi*x)-0,5                                                                                 *");
+		puts("*2. F2(x)=1,5*x^2-tg(x),                  если -2 <= x <= 2                                                           *");
+		puts("*    // 2^e^(x+1+x^3/2),                    если x>2                                                                  *");
+		puts("*    // 2/3*sin(x^2) + ln|x|,             если x<-2        ОДЗ:x = 1                                                  *");
+		puts("_______________________________________________________________________________________________________________________");
+		printf("\n");
+		puts("************************************************************");
+		puts("*   Что хотите сделать?                                    *");
+		puts("* 1 - Рассчитать значение функции при одном x              *");
+		puts("* 2 - Рассчитать множество значений функции на промежутке  *");
+		puts("* 3 - Построить график выбранной функции на промежутке     *");
+		puts("* 4 - Выйти из программы                                   *");
+		puts("************************************************************");
+		int c,n;
+		scanf("%i", &c);
+		printf("\n");
+		switch (c)
+		{
+		case 1:
+		{
+			int k;
+			double x, res = 0;
+			printf("Введите порядковый номер функции: ");
+			scanf("%d", &k);
+			printf("\n");
+			printf("Введите значение x для решения функции: ");
+			scanf("%lg", &x);
+			printf("\n");
+			if (k == 1)
+			{
+				if (x == 1)
+				{
+					puts("Значение не принадлежит ОДЗ.");
+				}
+				res = fun1(x);
+			}
+
+			else if (k == 2)
+			{
+				if (x == 1)
+				{
+					puts("Значение не принадлежит ОДЗ.");
+					break;
+				}
+				res = fun2(x);
+			}
+			else
+			{
+				printf("Введите корректный номер функции\n");
+				break;
+			}
+			puts("------------------");
+			printf("|  x    |   f(x)    \n");
+			printf("|  %.lf    |  %.2lf     \n", x, res);
+			puts("------------------");
+			puts("\n");
+			break;
+		}
+
+
+		case 2:
+		{
+			int k;
+			char s1, tz, s2;
+			float xn, xk, h;
+			printf("Введите порядковый номер функции: ");
+			scanf(" %d", &k);
+			printf("\n");
+			printf("Введите интервал в формате [x1; x2): ");
+			scanf(" %c%f%c%f%c", &s1, &xn, &tz, &xk, &s2);
+			printf("\n");
+			printf("Шаг: ");
+			scanf("%f", &h);
+			printf("\n");
+			if (k == 1)
+				tab(s1, xn, xk, s2, h, fun1);
+
+			else if (k == 2)
+				tab(s1, xn, s2, s2, h, fun2);
+
+			else
+				printf("Введите корректный номер функции\n");
+			puts("\n");
+			break;
+		}
+
+		case 3:
+		{
+			int k;
+			double xn, xk;
+			printf("Введите порядковый номер функции: ");
+			scanf(" %d", &k);
+			printf("\n");
+			printf("Введите начальное и конечное значение промежутка, на котором будет рассматриваться функция в формате '1,2': ");
+			scanf("%lf,%lf", &xn, &xk);
+			printf("\n");
+			if (k == 1)
+
+				plot(xn, xk, fun1);
+
+			else if (k == 2)
+
+				plot(xn, xk, fun2);
+
+			else
+				printf("Введите корректный номер функции\n");
+			puts("\n");
+			break;
+		}
+		}
+		printf("\tПродолжить? (Да-введите любой символ, нет - n)\n");
+		scanf("%d", &n);
+		printf("\n");
+		if ((n = getchar()) == 'n')
+		{
+			printf("\n");
+			puts("_______________________________________________________________________________________________________________________");
+			break;
+		}
+	}
+}
+	
+
+
+
+
+
+
+double fun1(double x) {
+	double res;
+	res = 2 * sin(pi * x) * sin(3 * pi * x) - 0.5;
+	return res;
+}
+
+double fun2(double x) { // ОДЗ x !=1
+	double res = 0;
+	if (x == 1)
+		res = NAN;
+	else if (x > 2)
+	{
+		res = pow(2, exp(x + 1 + sqrt(pow(x, 3))));
+	}
+	else if (x < -2)
+	{
+		res = 2 / 3. * sin(pow(x, 2)) + log(fabs(x));
+	}
+	else if (x >= -2 && x <= 2)
+	{
+		res = 1.5 * pow(x, 2) - tan(x);
+	}
+	return res;
+}
+
+void tab(char s1, float xn, float xk, char s2, float h, fun fun)
+{
+	double res;
+	if (s1 == '(')
+		xn += h;
+	if (s2 == ')')
+		xk -= h;
+
+	printf("---------------------------------------------\n");
+	printf("|  значение аргумента  |  результат функции |\n");
+	printf("---------------------------------------------\n");
+	for (float i = xn; i <= xk; i += h) {
+		if (fun == fun2 && i == 1)
+		printf("|  %18.5g  |  %16c  |\n", i, '-');
+		else {
+			res = fun(i);
+			printf("|  %18.5g  |  %16.5lg  |\n", i, res);
+		}
+	}
+	printf("---------------------------------------------\n");
+}
+
+void plot(double x0, double x1, fun f)
+{
+	char screen[SCREENW][SCREENH];
+	double x, y[SCREENW];
+	double ymin = 0, ymax = 0;
+	double hx, hy;
+	int i, j;
+	int xz, yz;
+	hx = (x1 - x0) / (SCREENW - 1);
+	for (i = 0, x = x0; i < SCREENW; ++i, x += hx) {
+		y[i] = f(x);
+		if (y[i] < ymin) ymin = y[i];
+		if (y[i] > ymax) ymax = y[i];
+
+	}
+	hy = (ymax - ymin) / (SCREENH - 1);
+	yz = (int)floor(ymax / hy + 0.5);
+	xz = (int)floor((0. - x0) / hx + 0.5);
+	//построение осей и заполнение массива отображения пробелами
+	for (j = 0; j < SCREENH; ++j)
+		for (i = 0; i < SCREENW; ++i) {
+			if (j == yz && i == xz) screen[i][j] = '+';
+			else if (j == yz) screen[i][j] = '-';
+			else if (i == xz) screen[i][j] = '|';
+			else screen[i][j] = ' ';
+
+		}
+	//определение положения значения функции на поле вывода
+	for (i = 0; i < SCREENW; ++i) {
+		j = (int)floor((ymax - y[i]) / hy + 0.5);
+		if (!isnan(y[i]))
+			screen[i][j] = '*';
+	}
+	//печать массива символов
+	for (j = 0; j < SCREENH; ++j) {
+		for (i = 0; i < SCREENW; ++i)  putchar(screen[i][j]);
+		putchar('\n');
+	}
+
+}
